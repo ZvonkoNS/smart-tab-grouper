@@ -1,0 +1,216 @@
+body {
+  width: 380px;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8f9fa;
+}
+
+.container {
+  padding: 16px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+}
+
+h2 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch.small {
+  width: 36px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.switch.small .slider:before {
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+}
+
+input:checked + .slider {
+  background-color: #007bff;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+input:checked + .switch.small .slider:before {
+  transform: translateX(16px);
+}
+
+#statusText {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.group-config, .domain-grouping {
+  margin-bottom: 20px;
+}
+
+.group-item, .setting-item {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.group-header, .setting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.group-title {
+  font-weight: 600;
+  color: #212529;
+}
+
+.group-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.gmail-color {
+  background-color: #dc3545;
+}
+
+.ai-color {
+  background-color: #007bff;
+}
+
+.group-patterns, .setting-description {
+  color: #6c757d;
+  font-size: 11px;
+}
+
+select {
+  padding: 4px 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 12px;
+  background: white;
+}
+
+.actions {
+  margin-bottom: 16px;
+}
+
+.btn {
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+}
+
+.btn.primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn.primary:hover {
+  background-color: #0056b3;
+}
+
+.btn.secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn.secondary:hover {
+  background-color: #545b62;
+}
+
+.status {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #495057;
+  margin-bottom: 4px;
+}
+
+.status-item:last-child {
+  margin-bottom: 0;
+}
+
+.status-item span:last-child {
+  font-weight: 600;
+  color: #007bff;
+}

@@ -1,20 +1,34 @@
 // background.js
-// cSpell:words huggingface
-
-import { AI_PATTERNS, GMAIL_PATTERNS } from './ai-patterns.js';
-
 class TabGroupManager {
   constructor() {
     this.groupConfigs = {
       gmail: {
         title: 'Gmail',
         color: 'red',
-        patterns: GMAIL_PATTERNS
+        patterns: [
+          '*://mail.google.com/*',
+          '*://gmail.com/*',
+          '*://*.gmail.com/*',
+          '*://www.gmail.com/*'
+        ]
       },
       ai: {
         title: 'AI',
         color: 'blue',
-        patterns: AI_PATTERNS
+        patterns: [
+          '*://chat.openai.com/*',
+          '*://chatgpt.com/*',
+          '*://*.openai.com/*',
+          '*://www.chatgpt.com/*',
+          '*://gemini.google.com/*',
+          '*://bard.google.com/*',
+          '*://ai.google.dev/*',
+          '*://makersuite.google.com/*',
+          '*://aistudio.google.com/*',
+          '*://perplexity.ai/*',
+          '*://*.perplexity.ai/*',
+          '*://www.perplexity.ai/*'
+        ]
       }
     };
     
@@ -90,10 +104,12 @@ class TabGroupManager {
       const urlObj = new URL(url);
       let domain = urlObj.hostname;
       
+      // Remove www. prefix if mergeSubdomains is enabled
       if (this.settings.mergeSubdomains && domain.startsWith('www.')) {
         domain = domain.substring(4);
       }
       
+      // For mergeSubdomains, extract main domain (e.g., google.com from mail.google.com)
       if (this.settings.mergeSubdomains) {
         const parts = domain.split('.');
         if (parts.length > 2) {
@@ -119,6 +135,7 @@ class TabGroupManager {
           console.log(`Found ${groups.length} groups in window ${window.id}`);
           
           for (const group of groups) {
+            // Check for predefined groups (Gmail, AI)
             for (const [groupType, config] of Object.entries(this.groupConfigs)) {
               if (group.title === config.title || 
                   group.title.toLowerCase() === config.title.toLowerCase()) {
@@ -128,6 +145,7 @@ class TabGroupManager {
               }
             }
             
+            // Check for domain groups
             if (this.settings.domainGrouping) {
               const domainCacheKey = `${window.id}-${group.title}`;
               this.domainGroupCache.set(domainCacheKey, group.id);
@@ -153,6 +171,7 @@ class TabGroupManager {
           await this.groupTabsByDomain(window);
         }
         
+        // Process individual tabs for predefined groups
         for (const tab of window.tabs) {
           if (tab.url && !tab.url.startsWith('chrome://') && tab.status === 'complete') {
             await this.processTab(tab);
@@ -169,6 +188,7 @@ class TabGroupManager {
     try {
       const domainGroups = new Map();
       
+      // Group tabs by domain
       for (const tab of window.tabs) {
         if (!tab.url || tab.url.startsWith('chrome://')) continue;
         if (this.settings.excludePinnedTabs && tab.pinned) continue;
@@ -176,6 +196,7 @@ class TabGroupManager {
         const domain = this.extractDomain(tab.url);
         if (!domain) continue;
         
+        // Skip if tab already matches a predefined group
         if (this.determineGroupType(tab.url)) continue;
         
         if (!domainGroups.has(domain)) {
@@ -184,6 +205,7 @@ class TabGroupManager {
         domainGroups.get(domain).push(tab);
       }
       
+      // Create groups for domains with enough tabs
       for (const [domain, tabs] of domainGroups.entries()) {
         if (tabs.length >= this.settings.minTabsForDomainGroup) {
           await this.createDomainGroup(domain, tabs, window.id);
@@ -201,6 +223,7 @@ class TabGroupManager {
       
       let groupId = this.domainGroupCache.get(cacheKey);
       
+      // Check if group already exists
       if (!groupId) {
         const existingGroups = await chrome.tabGroups.query({ windowId: windowId });
         const matchingGroup = existingGroups.find(group => 
@@ -213,6 +236,7 @@ class TabGroupManager {
         }
       }
       
+      // Get tabs that aren't already grouped
       const ungroupedTabs = tabs.filter(tab => 
         tab.groupId === chrome.tabs.TAB_ID_NONE || tab.groupId === -1
       );
@@ -220,6 +244,7 @@ class TabGroupManager {
       if (ungroupedTabs.length === 0) return;
       
       if (!groupId) {
+        // Create new group
         console.log(`Creating domain group for ${domain} with ${ungroupedTabs.length} tabs`);
         
         groupId = await new Promise((resolve, reject) => {
@@ -248,6 +273,7 @@ class TabGroupManager {
         this.domainGroupCache.set(cacheKey, groupId);
         console.log(`Created domain group "${groupTitle}" with ID:`, groupId);
       } else {
+        // Add tabs to existing group
         console.log(`Adding ${ungroupedTabs.length} tabs to existing domain group "${groupTitle}"`);
         
         await new Promise((resolve, reject) => {
@@ -269,11 +295,13 @@ class TabGroupManager {
   }
 
   formatDomainTitle(domain) {
+    // Capitalize first letter and remove common prefixes
     let title = domain.replace(/^www\./, '');
     return title.charAt(0).toUpperCase() + title.slice(1);
   }
 
   getDomainGroupColor(domain) {
+    // Assign colors based on domain hash for consistency
     const colors = ['grey', 'green', 'yellow', 'cyan', 'purple', 'orange', 'pink'];
     const hash = domain.split('').reduce((a, b) => {
       a = ((a << 5) - a) + b.charCodeAt(0);
@@ -292,6 +320,7 @@ class TabGroupManager {
       return;
     }
 
+    // First check for predefined groups (Gmail, AI)
     const groupType = this.determineGroupType(tab.url);
     if (groupType) {
       console.log(`Processing tab ${tab.id} for ${groupType} group:`, tab.url);
@@ -307,11 +336,13 @@ class TabGroupManager {
       return;
     }
 
+    // If domain grouping is enabled and no predefined group matches
     if (this.settings.domainGrouping) {
       if (this.settings.excludePinnedTabs && tab.pinned) return;
       
       const domain = this.extractDomain(tab.url);
       if (domain) {
+        // Check if there are enough tabs from this domain to create a group
         const tabs = await chrome.tabs.query({ windowId: tab.windowId });
         const domainTabs = tabs.filter(t => {
           if (!t.url || t.url.startsWith('chrome://')) return false;
@@ -338,6 +369,7 @@ class TabGroupManager {
       }
     }
     
+    // Additional manual checks for common cases
     if (normalizedUrl.includes('mail.google.com') || 
         normalizedUrl.includes('gmail.com')) {
       console.log(`URL ${url} matches gmail (manual check)`);
@@ -347,10 +379,7 @@ class TabGroupManager {
     if (normalizedUrl.includes('chatgpt.com') || 
         normalizedUrl.includes('chat.openai.com') ||
         normalizedUrl.includes('perplexity.ai') ||
-        normalizedUrl.includes('gemini.google.com') ||
-        normalizedUrl.includes('claude.ai') ||
-        normalizedUrl.includes('anthropic.com') ||
-        normalizedUrl.includes('huggingface.co')) {
+        normalizedUrl.includes('gemini.google.com')) {
       console.log(`URL ${url} matches ai (manual check)`);
       return 'ai';
     }
@@ -477,6 +506,7 @@ class TabGroupManager {
           const tabsInGroup = window.tabs.filter(tab => tab.groupId === group.id);
           
           if (tabsInGroup.length === 0) {
+            // Remove from both caches
             for (const [key, cachedGroupId] of this.groupCache.entries()) {
               if (cachedGroupId === group.id) {
                 this.groupCache.delete(key);

@@ -1,6 +1,4 @@
 // background.js
-// cSpell:words huggingface
-
 import { AI_PATTERNS, GMAIL_PATTERNS } from './ai-patterns.js';
 
 class TabGroupManager {

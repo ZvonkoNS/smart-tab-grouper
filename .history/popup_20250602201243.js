@@ -31,55 +31,13 @@ class PopupManager {
   async loadStatus() {
     try {
       const response = await this.sendMessage({ action: 'getStatus' });
-      await this.updateUI(response);
-      await this.updateTabCounts();
+      this.updateUI(response);
     } catch (error) {
       console.error('Error loading status:', error);
     }
   }
 
-  async updateTabCounts() {
-    try {
-      // Get all tabs in current window
-      const tabs = await chrome.tabs.query({ currentWindow: true });
-      
-      // Count tabs in Gmail and AI groups
-      let gmailCount = 0;
-      let aiCount = 0;
-      
-      // Get all tab groups in current window
-      const groups = await chrome.tabGroups.query({ windowId: tabs[0]?.windowId });
-      
-      // Find Gmail and AI groups
-      const gmailGroup = groups.find(group => 
-        group.title === 'Gmail' || group.title.toLowerCase() === 'gmail'
-      );
-      const aiGroup = groups.find(group => 
-        group.title === 'AI' || group.title.toLowerCase() === 'ai'
-      );
-      
-      // Count tabs in each group
-      if (gmailGroup) {
-        gmailCount = tabs.filter(tab => tab.groupId === gmailGroup.id).length;
-      }
-      
-      if (aiGroup) {
-        aiCount = tabs.filter(tab => tab.groupId === aiGroup.id).length;
-      }
-      
-      // Update the UI with animated counts
-      this.animateNumber(document.getElementById('gmailTabCount'), gmailCount);
-      this.animateNumber(document.getElementById('aiTabCount'), aiCount);
-      
-    } catch (error) {
-      console.error('Error updating tab counts:', error);
-      // Fallback to 0 if there's an error
-      document.getElementById('gmailTabCount').textContent = '0';
-      document.getElementById('aiTabCount').textContent = '0';
-    }
-  }
-
-  async updateUI(status) {
+  updateUI(status) {
     const enableToggle = document.getElementById('enableToggle');
     const statusText = document.getElementById('statusText');
     const statusDot = document.querySelector('.status-dot');
@@ -208,19 +166,6 @@ class PopupManager {
         await this.sendMessage({ action: 'refreshGroups' });
         await this.loadStatus();
       });
-    });
-
-    // Listen for tab changes to update counts in real-time
-    chrome.tabs.onCreated.addListener(() => {
-      setTimeout(() => this.updateTabCounts(), 500);
-    });
-
-    chrome.tabs.onRemoved.addListener(() => {
-      setTimeout(() => this.updateTabCounts(), 500);
-    });
-
-    chrome.tabs.onUpdated.addListener(() => {
-      setTimeout(() => this.updateTabCounts(), 500);
     });
   }
 
