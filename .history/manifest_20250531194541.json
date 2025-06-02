@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Smart Tab Auto-Grouper",
+  "version": "1.0.0",
+  "description": "Automatically groups tabs into Gmail and AI categories",
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.gmail.com/*",
+    "*://mail.google.com/*",
+    "*://*.google.com/*",
+    "*://*.openai.com/*",
+    "*://chat.openai.com/*",
+    "*://chatgpt.com/*",
+    "*://*.perplexity.ai/*",
+    "*://perplexity.ai/*",
+    "*://gemini.google.com/*",
+    "*://bard.google.com/*",
+    "*://ai.google.dev/*",
+    "*://makersuite.google.com/*",
+    "*://aistudio.google.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Tab Auto-Grouper Settings",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
+}

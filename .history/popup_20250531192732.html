@@ -1,0 +1,66 @@
+<!-- popup.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Smart Tab Auto-Grouper</h1>
+      <div class="toggle-container">
+        <label class="switch">
+          <input type="checkbox" id="enableToggle">
+          <span class="slider"></span>
+        </label>
+        <span id="statusText">Enabled</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="group-config">
+        <h2>Group Configuration</h2>
+        
+        <div class="group-item">
+          <div class="group-header">
+            <span class="group-title">Gmail</span>
+            <span class="group-color gmail-color"></span>
+          </div>
+          <div class="group-patterns">
+            <small>Matches: Gmail, Google Mail</small>
+          </div>
+        </div>
+
+        <div class="group-item">
+          <div class="group-header">
+            <span class="group-title">AI</span>
+            <span class="group-color ai-color"></span>
+          </div>
+          <div class="group-patterns">
+            <small>Matches: ChatGPT, Gemini, Perplexity</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="actions">
+        <button id="processAllTabs" class="btn primary">
+          Process All Open Tabs
+        </button>
+        <button id="refreshStatus" class="btn secondary">
+          Refresh Status
+        </button>
+      </section>
+
+      <section class="status">
+        <div class="status-item">
+          <span>Active Groups:</span>
+          <span id="activeGroupsCount">0</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
