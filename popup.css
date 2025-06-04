@@ -1,123 +1,338 @@
-# 🚀 Smart Tab Auto-Grouper
+:root {
+  --primary: #6366f1;
+  --primary-dark: #3730a3;
+  --secondary: #64748b;
+  --surface: #fff;
+  --bg-gradient: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+  --glass: rgba(255,255,255,0.65);
+  --glass-border: rgba(99,102,241,0.13);
+  --success: #10b981;
+  --gmail: #ea4335;
+  --ai: #6366f1;
+  --radius: 16px;
+  --shadow: 0 4px 24px 0 rgb(99 102 241 / 0.09);
+  --transition: 0.25s cubic-bezier(.4,0,.2,1);
+  --font: 'Inter', sans-serif;
+}
 
-**Automatically organize your browser tabs into smart groups for a cleaner, more productive browsing experience.**
+html, body {
+  width: 420px;
+  min-width: 420px;
+  max-width: 420px;
+  background: var(--bg-gradient);
+  font-family: var(--font);
+  color: #222;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-![Extension Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
-![Browser Support](https://img.shields.io/badge/browser-Brave%20%7C%20Chrome%20%7C%20Edge-green.svg)
-![License](https://img.shields.io/badge/license-MIT-orange.svg)
+.glassy-bg {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  padding-bottom: 16px;
+}
 
----
+.header {
+  background: linear-gradient(90deg, #6366f1 0%, #b4c0ff 100%);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 22px 24px 16px 24px;
+  border-radius: 0 0 var(--radius) var(--radius);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
 
-## 📋 Table of Contents
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  justify-content: space-between;
+}
 
-- [Overview](#overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Getting Started](#getting-started)
-- [User Guide](#user-guide)
-- [Supported Services](#supported-services)
-- [Troubleshooting](#troubleshooting)
-- [Privacy & Security](#privacy--security)
-- [Contributing](#contributing)
-- [License](#license)
+.brand-logo {
+  background: linear-gradient(135deg, #fff 20%, #6366f1 100%);
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px 0 rgb(99 102 241 / 0.13);
+  animation: pulse-gradient 2.5s infinite;
+}
 
----
+@keyframes pulse-gradient {
+  0%,100% { box-shadow: 0 2px 12px 0 rgb(99 102 241 / 0.13);}
+  50% { box-shadow: 0 6px 32px 0 rgb(99 102 241 / 0.20);}
+}
 
-## 🎯 Overview
+h1 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px #6366f1;
+}
 
-Smart Tab Auto-Grouper is a powerful browser extension that automatically organizes your tabs into meaningful groups. Say goodbye to tab chaos and hello to organized browsing! The extension intelligently groups your Gmail tabs, AI service tabs, and can even organize other websites by domain.
+.subtitle {
+  font-size: 13px;
+  color: #e0e7ff;
+  margin-top: 0;
+  font-weight: 500;
+}
 
-### Why Use Smart Tab Auto-Grouper?
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  vertical-align: middle;
+}
+.switch.small { width: 32px; height: 18px; }
+.switch.tiny { width: 28px; height: 14px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+  background: #e5e7eb; border-radius: 22px; transition: background var(--transition);
+}
+input:checked + .slider { background: var(--primary); }
+.slider:before {
+  position: absolute; content: "";
+  height: 18px; width: 18px; left: 2px; bottom: 2px;
+  background: #fff; border-radius: 50%; transition: .2s;
+  box-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.08);
+}
+.switch.small .slider:before { width: 14px; height: 14px; }
+.switch.tiny .slider:before { width: 10px; height: 10px; }
+input:checked + .slider:before { transform: translateX(18px); }
+.switch.small input:checked + .slider:before { transform: translateX(14px); }
+.switch.tiny input:checked + .slider:before { transform: translateX(10px); }
 
-- 🧹 **Reduce Tab Clutter:** Automatically organize tabs as you browse
-- ⚡ **Boost Productivity:** Find tabs faster with smart grouping
-- 🤖 **AI-Aware:** Recognizes 100+ popular AI services
-- 🎨 **Beautiful Interface:** Modern, intuitive popup design
-- 🔧 **Customizable:** Adjust settings to match your workflow
+main {
+  padding: 18px 18px 0 18px;
+  background: transparent;
+}
 
----
+.card {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+  padding: 20px 18px 14px 18px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s, background 0.3s;
+}
+.card:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, #c7d2fe33 0%, #f0f4ff00 100%);
+  opacity: 0.7;
+  z-index: 0;
+}
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
 
-## ✨ Features
+.groups-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+.group-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid #eceffd;
+  font-size: 15px;
+  transition: background 0.2s;
+  background: transparent;
+  position: relative;
+}
+.group-row:last-child { border-bottom: none; }
+.group-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  display: inline-block; margin-right: 4px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.08);
+  position: relative;
+  z-index: 2;
+}
+.group-dot.gmail { background: var(--gmail); }
+.group-dot.ai { background: var(--ai); }
+.group-label { flex: 1; }
+.group-count {
+  font-weight: 700;
+  color: var(--primary-dark);
+  min-width: 20px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s;
+}
 
-### 🎯 Smart Grouping
-- **Gmail Integration:** Automatically groups Gmail and Google Workspace tabs
-- **AI Services Recognition:** Supports 100+ AI platforms including ChatGPT, Claude, Gemini, Perplexity, and more
-- **Real-time Processing:** Groups tabs as you open them
+.domain-settings {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+}
+.setting-row select {
+  border-radius: 7px;
+  border: 1px solid var(--glass-border);
+  padding: 4px 10px;
+  font-size: 14px;
+  background: var(--surface);
+  color: var(--primary-dark);
+  box-shadow: 0 1px 4px 0 rgb(99 102 241 / 0.04);
+}
 
-### 🌐 Domain Grouping
-- **Automatic Domain Detection:** Groups tabs from the same website
-- **Customizable Thresholds:** Set minimum tab count for group creation
-- **Subdomain Merging:** Option to group related subdomains together
-- **Pinned Tab Exclusion:** Keep pinned tabs ungrouped if desired
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 14px 0 0 0;
+}
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 0;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 1px 4px 0 rgb(99 102 241 / 0.07);
+  outline: none;
+  width: 100%;
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.btn.primary {
+  background: linear-gradient(90deg, #6366f1 0%, #a5b4fc 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px 0 rgb(99 102 241 / 0.13);
+}
+.btn.primary:hover { background: linear-gradient(90deg, #3730a3 0%, #6366f1 100%); transform: translateY(-2px) scale(1.03);}
+.btn.secondary {
+  background: #f3f4f6;
+  color: var(--primary-dark);
+  border: 1px solid var(--glass-border);
+}
+.btn.secondary:hover { background: #e0e7ff; }
 
-### 🎨 Modern Interface
-- **Live Tab Counts:** See how many tabs are in each group
-- **Animated Interactions:** Smooth transitions and micro-animations
-- **Dark Mode Ready:** Adapts to your browser's theme
-- **Responsive Design:** Works perfectly on any screen size
+.btn.ripple:active::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 0; height: 0;
+  background: rgba(99,102,241,0.12);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple 0.5s linear;
+  z-index: 2;
+}
+@keyframes ripple {
+  to {
+    width: 200%;
+    height: 200%;
+    opacity: 0;
+  }
+}
 
-### ⚙️ Advanced Controls
-- **Manual Processing:** Force-process all open tabs
-- **Group Refresh:** Sync with existing tab groups
-- **Persistent Settings:** Remembers your preferences
-- **One-Click Toggle:** Enable/disable with a single click
+.stats {
+  display: flex;
+  gap: 18px;
+  margin-top: 22px;
+  justify-content: space-between;
+}
+.stat {
+  background: var(--glass);
+  border-radius: 12px;
+  box-shadow: 0 1px 4px 0 rgb(99 102 241 / 0.07);
+  padding: 14px 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+.stat:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, #6366f122 0%, #fff0 100%);
+  opacity: 0.5;
+  z-index: 0;
+}
+.stat-label {
+  color: var(--secondary);
+  font-size: 13px;
+  margin-bottom: 5px;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  transition: color 0.2s;
+  position: relative;
+  z-index: 1;
+}
 
----
+/* Micro Animations */
+.animate-fade-in { animation: fadeIn 0.7s both; }
+.animate-slide-down { animation: slideDown 0.7s both; }
+.animate-slide-up { animation: slideUp 0.7s both; }
+.delay-1 { animation-delay: 0.15s; }
+.delay-2 { animation-delay: 0.3s; }
+.delay-3 { animation-delay: 0.45s; }
 
-## 📦 Installation
+@keyframes fadeIn {
+  from { opacity: 0;}
+  to { opacity: 1;}
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px);}
+  to { opacity: 1; transform: none;}
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: none;}
+}
 
-### Prerequisites
-- **Browser:** Brave, Chrome, Edge, or any Chromium-based browser
-- **Version:** Latest browser version recommended
-- **Permissions:** Allow extensions in developer mode
-
-### Step-by-Step Installation
-
-#### 1. Download the Extension
-- Clone the repository:
-  ```sh
-  git clone https://github.com/ZvonkoNS/smart-tab-grouper.git
-  ```
-- Or download as ZIP and extract
-
-#### 2. Prepare Your Browser
-- Navigate to `brave://extensions/` or `chrome://extensions/`
-- Enable **Developer Mode** using the toggle in the top-right corner
-
-#### 3. Load the Extension
-- Click **"Load unpacked"**
-- Navigate to your extracted `smart-tab-grouper` folder
-- Select the folder and click **"Open"** or **"Select Folder"**
-
-#### 4. Pin the Extension (Recommended)
-- Click the puzzle piece 🧩 icon in your browser toolbar
-- Find **"Smart Tab Auto-Grouper"**
-- Click the pin 📌 icon to keep it visible
-
-### Verification
-✅ The Smart Tab Auto-Grouper icon appears in your toolbar  
-✅ Clicking it opens the popup interface  
-✅ Extension status shows "Enabled"
-
----
-
-## 🚀 Getting Started
-
-### Quick Setup (2 minutes)
-- Install the extension
-- Open test tabs (Gmail, AI services, same-site tabs)
-- Tabs should group automatically
-
----
-
-**[Continue with original content for User Guide, Supported Services, Troubleshooting, Privacy & Security, Contributing, License, Acknowledgments, and Contact sections as originally provided.]**
-
----
-
-<div align="center">
-
-**⭐ If you find this extension helpful, please consider giving it a star on GitHub! ⭐**
-
-Made with ❤️ by Zvonko
-
-</div>
+/* Responsive */
+@media (max-width: 430px) {
+  html, body { width: 100vw; min-width: 0; max-width: 100vw;}
+  .container { width: 100vw;}
+}

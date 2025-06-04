@@ -1,224 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html style="width:420px; min-width:420px; max-width:420px;">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=420, initial-scale=1">
   <link rel="stylesheet" href="popup.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <title>Smart Tab Grouper</title>
 </head>
-<body>
-  <div class="container">
-    <header class="header">
-      <div class="header-content">
-        <div class="brand">
-          <div class="brand-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 7H21L19 2H5L3 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M3 7L5 17H19L21 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M9 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="brand-text">
-            <h1>Smart Tab Grouper</h1>
-            <p class="brand-subtitle">Organize your browsing</p>
-          </div>
+<body style="width:420px; min-width:420px; max-width:420px;">
+  <div class="container glassy-bg animate-fade-in">
+    <header class="header animate-slide-down">
+      <div class="brand">
+        <div class="brand-logo pulse-gradient">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#6366f1" stroke-width="2"/>
+            <path d="M8 12h8M12 8v8" stroke="#6366f1" stroke-width="2" stroke-linecap="round"/>
+          </svg>
         </div>
-        
-        <div class="main-toggle">
-          <label class="toggle-switch" for="enableToggle">
-            <input type="checkbox" id="enableToggle">
-            <span class="toggle-slider">
-              <span class="toggle-thumb"></span>
-            </span>
-          </label>
-          <div class="status-indicator">
-            <div class="status-dot"></div>
-            <span id="statusText">Enabled</span>
-          </div>
+        <div>
+          <h1>Smart Tab Grouper</h1>
+          <div class="subtitle">Modern tab organization</div>
         </div>
+        <label class="switch">
+          <input type="checkbox" id="enableToggle">
+          <span class="slider"></span>
+        </label>
       </div>
     </header>
-
-    <main class="main-content">
-      <section class="card predefined-groups">
-        <div class="card-header">
-          <div class="section-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6C4 4.89543 4.89543 4 6 4H8" stroke="currentColor" stroke-width="2"/>
-              <rect x="8" y="2" width="8" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-            </svg>
-          </div>
-          <h2>Smart Groups</h2>
+    <main>
+      <section class="card glass-card animate-fade-in delay-1">
+        <div class="card-title">
+          <span>Smart Groups</span>
         </div>
-        
         <div class="groups-list">
-          <div class="group-item gmail-group">
-            <div class="group-content">
-              <div class="group-info">
-                <div class="group-header">
-                  <span class="group-title">Gmail</span>
-                  <div class="group-badge">
-                    <span class="group-color gmail-color"></span>
-                  </div>
-                </div>
-                <p class="group-description">Google Mail & Workspace</p>
-              </div>
-              <div class="group-stats">
-                <span class="stats-number" id="gmailTabCount">0</span>
-                <span class="stats-label">tabs</span>
-              </div>
-            </div>
+          <div class="group-row">
+            <span class="group-dot gmail"></span>
+            <span class="group-label">Gmail</span>
+            <span class="group-count" id="gmailTabCount">0</span>
           </div>
-
-          <div class="group-item ai-group">
-            <div class="group-content">
-              <div class="group-info">
-                <div class="group-header">
-                  <span class="group-title">AI Services</span>
-                  <div class="group-badge">
-                    <span class="group-color ai-color"></span>
-                  </div>
-                </div>
-                <p class="group-description">100+ AI tools & platforms</p>
-              </div>
-              <div class="group-stats">
-                <span class="stats-number" id="aiTabCount">0</span>
-                <span class="stats-label">tabs</span>
-              </div>
-            </div>
+          <div class="group-row">
+            <span class="group-dot ai"></span>
+            <span class="group-label">AI Services</span>
+            <span class="group-count" id="aiTabCount">0</span>
           </div>
         </div>
       </section>
-
-      <section class="card domain-grouping">
-        <div class="card-header">
-          <div class="section-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <h2>Domain Grouping</h2>
-          <label class="toggle-switch small" for="domainGroupingToggle">
+      <section class="card glass-card animate-fade-in delay-2">
+        <div class="card-title">
+          <span>Domain Grouping</span>
+          <label class="switch small">
             <input type="checkbox" id="domainGroupingToggle">
-            <span class="toggle-slider">
-              <span class="toggle-thumb"></span>
-            </span>
+            <span class="slider"></span>
           </label>
         </div>
-
         <div class="domain-settings" id="domainSettings">
           <div class="setting-row">
-            <div class="setting-info">
-              <span class="setting-label">Minimum tabs</span>
-              <span class="setting-description">Required tabs to create group</span>
-            </div>
-            <select id="minTabsSelect" class="modern-select">
-              <option value="2">2 tabs</option>
-              <option value="3">3 tabs</option>
-              <option value="4">4 tabs</option>
-              <option value="5">5 tabs</option>
+            <span>Min tabs:</span>
+            <select id="minTabsSelect">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </select>
           </div>
-
           <div class="setting-row">
-            <div class="setting-info">
-              <span class="setting-label">Exclude pinned tabs</span>
-              <span class="setting-description">Don't group pinned tabs</span>
-            </div>
-            <label class="toggle-switch mini" for="excludePinnedToggle">
+            <span>Exclude pinned</span>
+            <label class="switch tiny">
               <input type="checkbox" id="excludePinnedToggle">
-              <span class="toggle-slider">
-                <span class="toggle-thumb"></span>
-              </span>
+              <span class="slider"></span>
             </label>
           </div>
-
           <div class="setting-row">
-            <div class="setting-info">
-              <span class="setting-label">Merge subdomains</span>
-              <span class="setting-description">Group mail.google.com with drive.google.com</span>
-            </div>
-            <label class="toggle-switch mini" for="mergeSubdomainsToggle">
+            <span>Merge subdomains</span>
+            <label class="switch tiny">
               <input type="checkbox" id="mergeSubdomainsToggle">
-              <span class="toggle-slider">
-                <span class="toggle-thumb"></span>
-              </span>
+              <span class="slider"></span>
             </label>
           </div>
         </div>
       </section>
-
-      <section class="actions-section">
-        <button id="groupByDomain" class="btn btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span>Group by Domain</span>
-        </button>
-        
-        <div class="btn-group">
-          <button id="processAllTabs" class="btn btn-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z" stroke="currentColor" stroke-width="2"/>
-              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <span>Process All</span>
-          </button>
-          
-          <button id="refreshGroups" class="btn btn-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M23 4V10H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M20.49 15A9 9 0 1 1 5.64 5.64L23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span>Refresh</span>
-          </button>
-        </div>
+      <section class="actions">
+        <button id="groupByDomain" class="btn primary ripple animate-slide-up">Group by Domain</button>
+        <button id="processAllTabs" class="btn secondary ripple animate-slide-up delay-1">Process All Tabs</button>
+        <button id="refreshGroups" class="btn secondary ripple animate-slide-up delay-2">Refresh Groups</button>
       </section>
-
-      <section class="stats-section">
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-                <path d="M9 9H15V15H9Z" stroke="currentColor" stroke-width="2"/>
-              </svg>
-            </div>
-            <div class="stat-content">
-              <span class="stat-number" id="activeGroupsCount">0</span>
-              <span class="stat-label">Smart Groups</span>
-            </div>
-          </div>
-          
-          <div class="stat-item">
-            <div class="stat-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                <path d="M12 1V3" stroke="currentColor" stroke-width="2"/>
-                <path d="M12 21V23" stroke="currentColor" stroke-width="2"/>
-                <path d="M4.22 4.22L5.64 5.64" stroke="currentColor" stroke-width="2"/>
-                <path d="M18.36 18.36L19.78 19.78" stroke="currentColor" stroke-width="2"/>
-                <path d="M1 12H3" stroke="currentColor" stroke-width="2"/>
-                <path d="M21 12H23" stroke="currentColor" stroke-width="2"/>
-                <path d="M4.22 19.78L5.64 18.36" stroke="currentColor" stroke-width="2"/>
-                <path d="M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2"/>
-              </svg>
-            </div>
-            <div class="stat-content">
-              <span class="stat-number" id="activeDomainGroupsCount">0</span>
-              <span class="stat-label">Domain Groups</span>
-            </div>
-          </div>
+      <section class="stats animate-fade-in delay-3">
+        <div class="stat glass-card">
+          <span class="stat-label">Smart Groups</span>
+          <span class="stat-value" id="activeGroupsCount">0</span>
+        </div>
+        <div class="stat glass-card">
+          <span class="stat-label">Domain Groups</span>
+          <span class="stat-value" id="activeDomainGroupsCount">0</span>
         </div>
       </section>
     </main>
   </div>
-
   <script src="popup.js"></script>
 </body>
 </html>

@@ -7,32 +7,31 @@ class PopupManager {
     await this.loadStatus();
     this.setupEventListeners();
     this.setupAnimations();
+    await this.updateTabCounts();
+    await this.updateGroupCounters();
   }
 
   setupAnimations() {
     // Animate domain settings visibility
     const domainToggle = document.getElementById('domainGroupingToggle');
     const domainSettings = document.getElementById('domainSettings');
-    
     const toggleDomainSettings = () => {
       if (domainToggle.checked) {
-        domainSettings.classList.add('active');
+        domainSettings.style.opacity = "1";
+        domainSettings.style.pointerEvents = "auto";
       } else {
-        domainSettings.classList.remove('active');
+        domainSettings.style.opacity = "0.5";
+        domainSettings.style.pointerEvents = "none";
       }
     };
-    
-    // Initial state
     toggleDomainSettings();
-    
     domainToggle.addEventListener('change', toggleDomainSettings);
   }
 
   async loadStatus() {
     try {
       const response = await this.sendMessage({ action: 'getStatus' });
-      await this.updateUI(response);
-      await this.updateTabCounts();
+      this.updateUI(response);
     } catch (error) {
       console.error('Error loading status:', error);
     }
@@ -40,101 +39,104 @@ class PopupManager {
 
   async updateTabCounts() {
     try {
-      // Get all tabs in current window
-      const tabs = await chrome.tabs.query({ currentWindow: true });
-      
-      // Count tabs in Gmail and AI groups
-      let gmailCount = 0;
-      let aiCount = 0;
-      
+      const [currentTab] = await chrome.tabs.query({active: true, currentWindow: true});
+      if (!currentTab) return;
+      const tabs = await chrome.tabs.query({ windowId: currentTab.windowId });
+
       // Get all tab groups in current window
-      const groups = await chrome.tabGroups.query({ windowId: tabs[0]?.windowId });
-      
-      // Find Gmail and AI groups
-      const gmailGroup = groups.find(group => 
+      const groups = await chrome.tabGroups.query({ windowId: currentTab.windowId });
+      const gmailGroup = groups.find(group =>
         group.title === 'Gmail' || group.title.toLowerCase() === 'gmail'
       );
-      const aiGroup = groups.find(group => 
-        group.title === 'AI' || group.title.toLowerCase() === 'ai'
+      const aiGroup = groups.find(group =>
+        group.title === 'AI' || group.title === 'AI Services' || group.title.toLowerCase() === 'ai'
       );
-      
-      // Count tabs in each group
-      if (gmailGroup) {
+
+      let gmailCount = 0, aiCount = 0;
+      if (gmailGroup)
         gmailCount = tabs.filter(tab => tab.groupId === gmailGroup.id).length;
-      }
-      
-      if (aiGroup) {
+      if (aiGroup)
         aiCount = tabs.filter(tab => tab.groupId === aiGroup.id).length;
-      }
-      
-      // Update the UI with animated counts
+
       this.animateNumber(document.getElementById('gmailTabCount'), gmailCount);
       this.animateNumber(document.getElementById('aiTabCount'), aiCount);
-      
     } catch (error) {
-      console.error('Error updating tab counts:', error);
-      // Fallback to 0 if there's an error
       document.getElementById('gmailTabCount').textContent = '0';
       document.getElementById('aiTabCount').textContent = '0';
     }
   }
 
-  async updateUI(status) {
+  async updateGroupCounters() {
+    try {
+      const [currentTab] = await chrome.tabs.query({active: true, currentWindow: true});
+      if (!currentTab) return;
+      const groups = await chrome.tabGroups.query({ windowId: currentTab.windowId });
+      let smartGroups = 0, domainGroups = 0;
+      for (const group of groups) {
+        if (
+          group.title === "Gmail" ||
+          group.title === "AI Services" ||
+          group.title === "AI" ||
+          group.title.toLowerCase() === "gmail" ||
+          group.title.toLowerCase() === "ai"
+        ) {
+          smartGroups++;
+        } else {
+          domainGroups++;
+        }
+      }
+      this.animateNumber(document.getElementById('activeGroupsCount'), smartGroups);
+      this.animateNumber(document.getElementById('activeDomainGroupsCount'), domainGroups);
+    } catch (error) {
+      document.getElementById('activeGroupsCount').textContent = '0';
+      document.getElementById('activeDomainGroupsCount').textContent = '0';
+    }
+  }
+
+  updateUI(status) {
     const enableToggle = document.getElementById('enableToggle');
     const statusText = document.getElementById('statusText');
-    const statusDot = document.querySelector('.status-dot');
-    const activeGroupsCount = document.getElementById('activeGroupsCount');
-    const activeDomainGroupsCount = document.getElementById('activeDomainGroupsCount');
-    
+    enableToggle.checked = status.enabled;
+    statusText.textContent = status.enabled ? 'Enabled' : 'Disabled';
+
     const domainGroupingToggle = document.getElementById('domainGroupingToggle');
     const minTabsSelect = document.getElementById('minTabsSelect');
     const excludePinnedToggle = document.getElementById('excludePinnedToggle');
     const mergeSubdomainsToggle = document.getElementById('mergeSubdomainsToggle');
 
-    // Update main toggle
-    enableToggle.checked = status.enabled;
-    statusText.textContent = status.enabled ? 'Enabled' : 'Disabled';
-    
-    // Update status indicator
-    if (status.enabled) {
-      statusDot.style.background = 'var(--success-color)';
-    } else {
-      statusDot.style.background = 'var(--text-tertiary)';
-    }
-    
-    // Update counts with animation
-    this.animateNumber(activeGroupsCount, status.activeGroups || 0);
-    this.animateNumber(activeDomainGroupsCount, status.activeDomainGroups || 0);
-    
-    // Update settings
     if (status.settings) {
       domainGroupingToggle.checked = status.settings.domainGrouping;
       minTabsSelect.value = status.settings.minTabsForDomainGroup;
       excludePinnedToggle.checked = status.settings.excludePinnedTabs;
       mergeSubdomainsToggle.checked = status.settings.mergeSubdomains;
-      
       // Update domain settings visibility
       const domainSettings = document.getElementById('domainSettings');
       if (status.settings.domainGrouping) {
-        domainSettings.classList.add('active');
+        domainSettings.style.opacity = "1";
+        domainSettings.style.pointerEvents = "auto";
       } else {
-        domainSettings.classList.remove('active');
+        domainSettings.style.opacity = "0.5";
+        domainSettings.style.pointerEvents = "none";
       }
     }
   }
 
   animateNumber(element, targetValue) {
     const currentValue = parseInt(element.textContent) || 0;
-    const duration = 500;
-    const steps = 30;
+    const duration = 400;
+    const steps = 16;
     const stepValue = (targetValue - currentValue) / steps;
     let currentStep = 0;
+
+    if (currentValue === targetValue) {
+      element.textContent = targetValue;
+      return;
+    }
 
     const timer = setInterval(() => {
       currentStep++;
       const newValue = Math.round(currentValue + (stepValue * currentStep));
       element.textContent = newValue;
-      
       if (currentStep >= steps) {
         element.textContent = targetValue;
         clearInterval(timer);
@@ -148,27 +150,26 @@ class PopupManager {
     const minTabsSelect = document.getElementById('minTabsSelect');
     const excludePinnedToggle = document.getElementById('excludePinnedToggle');
     const mergeSubdomainsToggle = document.getElementById('mergeSubdomainsToggle');
-    
     const groupByDomain = document.getElementById('groupByDomain');
     const processAllTabs = document.getElementById('processAllTabs');
     const refreshGroups = document.getElementById('refreshGroups');
 
     enableToggle.addEventListener('change', async () => {
       try {
-        const response = await this.sendMessage({ action: 'toggleEnabled' });
+        await this.sendMessage({ action: 'toggleEnabled' });
         await this.loadStatus();
-      } catch (error) {
-        console.error('Error toggling enabled state:', error);
-      }
+        await this.updateTabCounts();
+        await this.updateGroupCounters();
+      } catch (error) {}
     });
 
     domainGroupingToggle.addEventListener('change', async () => {
       try {
         await this.sendMessage({ action: 'toggleDomainGrouping' });
         await this.loadStatus();
-      } catch (error) {
-        console.error('Error toggling domain grouping:', error);
-      }
+        await this.updateTabCounts();
+        await this.updateGroupCounters();
+      } catch (error) {}
     });
 
     const updateSettings = async () => {
@@ -179,48 +180,57 @@ class PopupManager {
           mergeSubdomains: mergeSubdomainsToggle.checked
         };
         await this.sendMessage({ action: 'updateSettings', settings });
-      } catch (error) {
-        console.error('Error updating settings:', error);
-      }
+        await this.updateTabCounts();
+        await this.updateGroupCounters();
+      } catch (error) {}
     };
 
     minTabsSelect.addEventListener('change', updateSettings);
     excludePinnedToggle.addEventListener('change', updateSettings);
     mergeSubdomainsToggle.addEventListener('change', updateSettings);
 
-    // Button click handlers with loading states
     groupByDomain.addEventListener('click', async () => {
       await this.handleButtonClick(groupByDomain, async () => {
         await this.sendMessage({ action: 'groupByDomain' });
-        await this.loadStatus();
+        await this.updateTabCounts();
+        await this.updateGroupCounters();
       });
     });
 
     processAllTabs.addEventListener('click', async () => {
       await this.handleButtonClick(processAllTabs, async () => {
         await this.sendMessage({ action: 'processAllTabs' });
-        await this.loadStatus();
+        await this.updateTabCounts();
+        await this.updateGroupCounters();
       });
     });
 
     refreshGroups.addEventListener('click', async () => {
       await this.handleButtonClick(refreshGroups, async () => {
         await this.sendMessage({ action: 'refreshGroups' });
-        await this.loadStatus();
+        await this.updateTabCounts();
+        await this.updateGroupCounters();
       });
     });
 
     // Listen for tab changes to update counts in real-time
     chrome.tabs.onCreated.addListener(() => {
-      setTimeout(() => this.updateTabCounts(), 500);
+      setTimeout(() => {
+        this.updateTabCounts();
+        this.updateGroupCounters();
+      }, 400);
     });
-
     chrome.tabs.onRemoved.addListener(() => {
-      setTimeout(() => this.updateTabCounts(), 500);
+      setTimeout(() => {
+        this.updateTabCounts();
+        this.updateGroupCounters();
+      }, 400);
     });
-
     chrome.tabs.onUpdated.addListener(() => {
-      setTimeout(() => this.updateTabCounts(), 500);
+      setTimeout(() => {
+        this.updateTabCounts();
+        this.updateGroupCounters();
+      }, 400);
     });
   }
 
@@ -228,10 +238,9 @@ class PopupManager {
     try {
       button.classList.add('loading');
       button.disabled = true;
-      
       await action();
     } catch (error) {
-      console.error('Button action error:', error);
+      // Optionally show error
     } finally {
       button.classList.remove('loading');
       button.disabled = false;
@@ -243,7 +252,7 @@ class PopupManager {
       chrome.runtime.sendMessage(message, (response) => {
         if (chrome.runtime.lastError) {
           reject(new Error(chrome.runtime.lastError.message));
-        } else if (response.error) {
+        } else if (response && response.error) {
           reject(new Error(response.error));
         } else {
           resolve(response);
